@@ -6,16 +6,21 @@ using UnityEngine;
 public class Controlable : MonoBehaviour
 {
     Renderer my_renderer;
+    private Vector3 desired_destination;
 
     // Start is called before the first frame update
     void Start()
     {
+        desired_destination = transform.position;
         my_renderer = GetComponent<Renderer>();
+        transform.sc
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        transform.position = Vector3.Lerp(transform.position, desired_destination, 0.1f);
 
     }
 
@@ -52,5 +57,11 @@ public class Controlable : MonoBehaviour
     internal void deselect()
     {
         go_white();
+    }
+
+    internal void update_drag_position(Vector3 drag_destination)
+    {
+        print(drag_destination);
+        desired_destination = drag_destination;
     }
 }
