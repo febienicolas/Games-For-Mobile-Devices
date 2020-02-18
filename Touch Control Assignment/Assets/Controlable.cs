@@ -13,7 +13,7 @@ public class Controlable : MonoBehaviour
     {
         desired_destination = transform.position;
         my_renderer = GetComponent<Renderer>();
-        transform.sc
+        
     }
 
     // Update is called once per frame
