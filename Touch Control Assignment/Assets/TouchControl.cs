@@ -10,6 +10,8 @@ public class TouchControl : MonoBehaviour
     private bool[] touchDidMove;
     private float tapTimeThreshold = .5f;
     Controlable currently_selected_item;
+    public float perspectiveZoomSpeed = .5f;
+    public float orthoZoomSpeed = .5f;
   
 
     Camera my_camera = new Camera();
@@ -18,6 +20,8 @@ public class TouchControl : MonoBehaviour
     private Quaternion initial_object_orientation;
     private float initial_distance;
     private Vector3 initial_scale;
+    private float previousDistance;
+    private float zoomSpeed = 1f;
 
     // Start is called before the first frame update
     void Start()
@@ -50,11 +54,25 @@ public class TouchControl : MonoBehaviour
             if (currently_selected_item)
             {
                 Vector2 diff = touch2.position - touch1.position;
-                
+
                 float new_finger_angle = Mathf.Atan2(diff.y, diff.x);
-                currently_selected_item.transform.rotation = initial_object_orientation * Quaternion.AngleAxis(Mathf.Rad2Deg *(new_finger_angle - initial_finger_angle), my_camera.transform.forward);
-                currently_selected_item.transform.localScale = (Vector2.Distance(touch1.position, touch2.position)/ initial_distance) *initial_scale;
+                currently_selected_item.transform.rotation = initial_object_orientation * Quaternion.AngleAxis(Mathf.Rad2Deg * (new_finger_angle - initial_finger_angle), my_camera.transform.forward);
+                currently_selected_item.transform.localScale = (Vector2.Distance(touch1.position, touch2.position) / initial_distance) * initial_scale;
             }
+            //pinch
+
+
+            else if (Input.touchCount == 2 && (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(1).phase == TouchPhase.Moved))
+            {
+                float distance;
+                Vector2 touchcam1 = Input.GetTouch(0).position;
+                Vector2 touchcam2 = Input.GetTouch(1).position;
+                distance = Vector2.Distance(touchcam1, touchcam2);
+                float pinchAmount = (distance - previousDistance) * zoomSpeed * Time.deltaTime;
+                my_camera.transform.Translate(0, 0, pinchAmount);
+                previousDistance = distance;
+            }
+
         }
         else
         foreach (Touch touch in Input.touches)
